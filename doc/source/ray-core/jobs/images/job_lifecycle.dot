@@ -1,0 +1,27 @@
+digraph G {
+  rankdir=TB;
+  node [shape=box, style=filled, fontname="Arial"];
+  edge [fontname="Arial", fontsize=10];
+  
+  // Job States
+  PENDING [fillcolor=lightyellow];
+  RUNNING [fillcolor=lightgreen];
+  SUCCEEDED [fillcolor=lightblue];
+  FAILED [fillcolor=lightpink];
+  STOPPED [fillcolor=lightgray];
+  
+  // Transitions
+  PENDING -> RUNNING [label="Runtime env setup complete\nResources available"];
+  RUNNING -> SUCCEEDED [label="Job completes with exit code 0"];
+  RUNNING -> FAILED [label="Job exits with non-zero code\nRuntime env setup fails\nResources unavailable"];
+  RUNNING -> STOPPED [label="User calls stop_job()"];
+  
+  // Annotations
+  subgraph cluster_legend {
+    label="Managed by";
+    node [shape=plaintext, style=solid, fillcolor=white];
+    legend1 [label="JobManager: Creates job, assigns ID, monitors status"];
+    legend2 [label="JobSupervisor: Executes job, updates status"];
+    legend3 [label="JobInfoStorageClient: Persists state in GCS"];
+  }
+}

@@ -1,0 +1,23 @@
+digraph G {
+  rankdir=LR;
+  node [shape=box, style=filled, fillcolor=lightblue, fontname="Arial"];
+  edge [fontname="Arial", fontsize=10];
+  
+  // Components
+  Client [label="Client", fillcolor=lightgreen];
+  JobHead [label="JobHead"];
+  JobAgent [label="JobAgent"];
+  JobManager [label="JobManager"];
+  JobSupervisor [label="JobSupervisor"];
+  GCS [label="GCS", fillcolor=lightyellow];
+  
+  // Submission Flow
+  Client -> JobHead [label="1. submit_job()\nEntrypoint, RuntimeEnv, Resources"];
+  JobHead -> JobAgent [label="2. forward to agent"];
+  JobAgent -> JobManager [label="3. submit_job()"];
+  JobManager -> GCS [label="4. Store job info\nSet status=PENDING"];
+  JobManager -> JobSupervisor [label="5. Create actor\nwith runtime_env"];
+  JobSupervisor -> JobSupervisor [label="6. run()\nExecute entrypoint"];
+  JobSupervisor -> GCS [label="7. Update status\nRUNNING -> SUCCEEDED/FAILED"];
+  GCS -> Client [label="8. Client can poll\nfor status/logs"];
+}

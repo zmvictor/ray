@@ -1,0 +1,32 @@
+digraph G {
+  rankdir=TB;
+  node [shape=box, style=filled, fillcolor=lightblue, fontname="Arial"];
+  edge [fontname="Arial", fontsize=10];
+  
+  // Components
+  JobSubmissionClient [label="JobSubmissionClient\n(client-side API)"];
+  JobHead [label="JobHead\n(coordinates cluster-wide)"];
+  JobAgent [label="JobAgent\n(handles HTTP requests)"];
+  JobManager [label="JobManager\n(job lifecycle)"];
+  JobSupervisor [label="JobSupervisor\n(runs entrypoint)"];
+  JobInfoStorage [label="JobInfoStorageClient\n(persists data)"];
+  JobInfo [label="JobInfo\n(data structure)", fillcolor=lightgreen];
+  
+  // Relationships
+  JobSubmissionClient -> JobHead [label="HTTP API calls"];
+  JobHead -> JobAgent [label="routes requests"];
+  JobAgent -> JobManager [label="manages jobs"];
+  JobManager -> JobSupervisor [label="creates\n(one per job)"];
+  JobManager -> JobInfoStorage [label="uses"];
+  JobSupervisor -> JobInfoStorage [label="updates status"];
+  JobInfoStorage -> JobInfo [label="uses"];
+  
+  // Code References
+  JobSubmissionClient -> JobSubmissionClient [label="sdk.py", style=dotted];
+  JobHead -> JobHead [label="job_head.py", style=dotted];
+  JobAgent -> JobAgent [label="job_agent.py", style=dotted];
+  JobManager -> JobManager [label="job_manager.py", style=dotted];
+  JobSupervisor -> JobSupervisor [label="job_supervisor.py", style=dotted];
+  JobInfoStorage -> JobInfoStorage [label="common.py", style=dotted];
+  JobInfo -> JobInfo [label="common.py:JobInfo", style=dotted];
+}

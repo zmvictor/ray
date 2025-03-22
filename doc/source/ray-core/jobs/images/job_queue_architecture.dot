@@ -1,0 +1,35 @@
+digraph G {
+  rankdir=TB;
+  node [shape=box, style=filled, fillcolor=lightblue, fontname="Arial"];
+  edge [fontname="Arial", fontsize=10];
+  
+  // Client side
+  Client [label="Client\nJobSubmissionClient", fillcolor=lightgreen];
+  
+  // Server side components
+  JobHead [label="JobHead\n(Head Node)"];
+  JobAgent [label="JobAgent\n(Worker Node)"];
+  JobManager [label="JobManager\n(Job Lifecycle)"];
+  JobSupervisor [label="JobSupervisor\n(Job Execution)"];
+  GCS [label="Global Control Store\n(GCS)", fillcolor=lightyellow];
+  Storage [label="JobInfoStorageClient\n(Job Data Storage)"];
+  
+  // Connections
+  Client -> JobHead [label="Submit/Stop/Delete Job"];
+  JobHead -> JobAgent [label="Forward Request"];
+  JobAgent -> JobManager [label="Process Request"];
+  JobManager -> JobSupervisor [label="Create & Run"];
+  JobSupervisor -> GCS [label="Update Status"];
+  JobManager -> Storage [label="Store/Retrieve Info"];
+  Storage -> GCS [label="Persist Data"];
+  
+  // Job State representation
+  subgraph cluster_job_states {
+    label="Job States";
+    node [shape=box, style=filled, fillcolor=lightpink];
+    PENDING -> RUNNING;
+    RUNNING -> SUCCEEDED [color=green];
+    RUNNING -> FAILED [color=red];
+    RUNNING -> STOPPED [color=orange];
+  }
+}
